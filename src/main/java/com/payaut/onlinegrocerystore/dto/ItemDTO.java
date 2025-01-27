@@ -1,13 +1,27 @@
 package com.payaut.onlinegrocerystore.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import com.payaut.onlinegrocerystore.entity.ItemType;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder(toBuilder = true, setterPrefix = "with")
 public class ItemDTO {
-    private String name;       // Name of the item (e.g., "Bread", "Vegetables", "Beer")
-    private Integer quantity;  // Quantity or weight (in grams for vegetables)
-    private String details;    // Additional details (e.g., "3 days old" for bread, "Dutch Beer" for beer)
-    private Double price;      // Price per unit (for output only, optional in input)
+
+    @NotNull(message = "Item type cannot be null")
+    private ItemType itemType;
+
+    private String name;
+
+    private Double unitPrice;
+
+    @NotNull(message = "Quantity cannot be null")
+    @DecimalMin(value = "1", message = "Quantity must be at least 1")
+    private Integer quantity;
+
+    private String details;
 }

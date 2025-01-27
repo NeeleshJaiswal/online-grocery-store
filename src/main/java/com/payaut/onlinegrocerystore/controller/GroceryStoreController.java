@@ -1,6 +1,5 @@
 package com.payaut.onlinegrocerystore.controller;
 
-import com.payaut.onlinegrocerystore.dto.OrderDTO;
 import com.payaut.onlinegrocerystore.dto.ReceiptDTO;
 import com.payaut.onlinegrocerystore.dto.ItemDTO;
 import com.payaut.onlinegrocerystore.service.GroceryStoreService;
@@ -27,7 +26,7 @@ public class GroceryStoreController {
     }
 
     @PostMapping("/orders")
-    public ReceiptDTO calculateOrder(@RequestBody final OrderDTO orderDTO) {
-        return groceryStoreService.calculateOrder(orderDTO);
+    public ReceiptDTO calculateOrder(@RequestBody final List<ItemDTO> items) {
+        return groceryStoreService.calculateOrder(items);
     }
 }
