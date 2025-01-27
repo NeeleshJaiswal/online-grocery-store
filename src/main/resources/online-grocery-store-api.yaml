@@ -1,0 +1,83 @@
+openapi: 3.0.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+paths:
+  /api/v1/online/grocery/orders:
+    post:
+      tags:
+        - grocery-store-controller
+      operationId: calculateOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ReceiptDTO'
+  /api/v1/online/grocery/prices:
+    get:
+      tags:
+        - grocery-store-controller
+      operationId: getPrices
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ItemDTO'
+  /api/v1/online/grocery/discounts:
+    get:
+      tags:
+        - grocery-store-controller
+      operationId: getDiscountRules
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+components:
+  schemas:
+    ItemDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        quantity:
+          type: integer
+          format: int32
+        details:
+          type: string
+    OrderDTO:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ItemDTO'
+    ReceiptDTO:
+      type: object
+      properties:
+        total:
+          type: number
+          format: double
+        breakdown:
+          type: array
+          items:
+            type: string
