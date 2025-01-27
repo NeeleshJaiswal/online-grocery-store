@@ -160,7 +160,7 @@
                             <library>spring-boot</library>
                             <apiPackage>com.payaut.onlinegrocerystore.api</apiPackage>
                             <modelPackage>com.payaut.onlinegrocerystore.api.model</modelPackage>
-                            <modelNameSuffix>DTO</modelNameSuffix>
+<!--                            <modelNameSuffix>DTO</modelNameSuffix>-->
                             <configOptions>
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                                 <useSpringBoot3>true</useSpringBoot3>

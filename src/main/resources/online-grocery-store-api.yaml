@@ -15,7 +15,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OrderDTO'
+              type: array
+              items:
+                $ref: '#/components/schemas/ItemDTO'
         required: true
       responses:
         '200':
@@ -57,20 +59,26 @@ components:
     ItemDTO:
       type: object
       properties:
+        itemType:
+          type: string
+          enum:
+            - BREAD
+            - VEGETABLE
+            - BEER
         name:
           type: string
+        unitPrice:
+          type: number
+          format: double
         quantity:
           type: integer
           format: int32
+          minimum: 1
         details:
           type: string
-    OrderDTO:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/ItemDTO'
+      required:
+        - itemType
+        - quantity
     ReceiptDTO:
       type: object
       properties:

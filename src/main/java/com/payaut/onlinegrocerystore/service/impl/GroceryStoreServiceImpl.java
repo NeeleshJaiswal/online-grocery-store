@@ -30,18 +30,11 @@ public class GroceryStoreServiceImpl implements GroceryStoreService {
         List<String> breakdown = new ArrayList<>();
 
         for (ItemDTO dto : items) {
-            // Fetch the unit price based on itemType instead of name
             Item dbItem = itemRepository.findByItemType(dto.getItemType())
                     .orElseThrow(() -> new IllegalArgumentException("Item type not found: " + dto.getItemType()));
-
-            // Set the unit price in the DTO
             dto.setUnitPrice(dbItem.getUnitPrice());
-
-            // Apply the appropriate discount strategy
             DiscountStrategy strategy = pickStrategy(dto.getItemType());
             double cost = strategy.calculateCost(dto);
-
-            // Build the breakdown line
             breakdown.add(buildLabel(dto) + ": €" + String.format("%.2f", cost));
             total += cost;
         }
@@ -54,7 +47,7 @@ public class GroceryStoreServiceImpl implements GroceryStoreService {
 
     @Override
     public List<String> getDiscountRules() {
-        // Hard-coded or can be stored in DB, whichever you prefer
+        // Hard-coded
         List<String> rules = new ArrayList<>();
         rules.add("BREAD: 0–2 days old => no discount, 3–5 days old => Buy 1 Take 2, 6 days old=> Pay 1 Take 3, more than 6 days old => not allowed.");
         rules.add("VEGETABLE: weight ≤100 grams => 5% off, 101 grams ≤ 500 grams => 7%, >500 grams => 10% off.");
@@ -64,15 +57,12 @@ public class GroceryStoreServiceImpl implements GroceryStoreService {
 
     @Override
     public List<ItemDTO> getPrices() {
-        // Retrieve items from DB and convert to DTO
-        // These items might be "price definitions" rather than actual orders
         return itemRepository.findAll()
                 .stream()
-                .map(this::toDTO) // convert entity -> DTO
-                .collect(Collectors.toList());
+                .map(this::toDTO)
+                .toList();
     }
 
-    // Helper: pick discount strategy
     private DiscountStrategy pickStrategy(ItemType type) {
         return switch (type) {
             case BREAD -> new BreadDiscountStrategy();
@@ -82,8 +72,6 @@ public class GroceryStoreServiceImpl implements GroceryStoreService {
         };
     }
 
-
-    // Helper: build a user-friendly label for breakdown
     private String buildLabel(ItemDTO dto) {
         return switch (dto.getItemType()) {
             case BREAD -> dto.getQuantity() + " x Bread (" + dto.getDetails() + ")";
@@ -92,7 +80,6 @@ public class GroceryStoreServiceImpl implements GroceryStoreService {
         };
     }
 
-    // Helper: convert entity -> DTO
     private ItemDTO toDTO(Item entity) {
         return ItemDTO.builder()
                 .withItemType(entity.getItemType())
