@@ -4,6 +4,7 @@ import com.payaut.onlinegrocerystore.dto.ReceiptDTO;
 import com.payaut.onlinegrocerystore.dto.ItemDTO;
 import com.payaut.onlinegrocerystore.service.GroceryStoreService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,21 +13,28 @@ import java.util.List;
 @RequestMapping("/api/v1/online/grocery")
 public class GroceryStoreController {
 
-    @Autowired
-    private GroceryStoreService groceryStoreService;
+
+    private final GroceryStoreService groceryStoreService;
+
+    public GroceryStoreController(GroceryStoreService groceryStoreService) {
+        this.groceryStoreService = groceryStoreService;
+    }
 
     @GetMapping("/discounts")
-    public List<String> getDiscountRules() {
-        return groceryStoreService.getDiscountRules();
+    public ResponseEntity<List<String>> getDiscountRules() {
+        List<String> discountRules = groceryStoreService.getDiscountRules();
+        return ResponseEntity.ok(discountRules);
     }
 
     @GetMapping("/prices")
-    public List<ItemDTO> getPrices() {
-        return groceryStoreService.getPrices();
+    public ResponseEntity<List<ItemDTO>> getPrices() {
+        List<ItemDTO> prices = groceryStoreService.getPrices();
+        return ResponseEntity.ok(prices);
     }
 
     @PostMapping("/orders")
-    public ReceiptDTO calculateOrder(@RequestBody final List<ItemDTO> items) {
-        return groceryStoreService.calculateOrder(items);
+    public ResponseEntity<ReceiptDTO> calculateOrder(@RequestBody final List<ItemDTO> items) {
+        ReceiptDTO receipt = groceryStoreService.calculateOrder(items);
+        return ResponseEntity.ok(receipt);
     }
 }

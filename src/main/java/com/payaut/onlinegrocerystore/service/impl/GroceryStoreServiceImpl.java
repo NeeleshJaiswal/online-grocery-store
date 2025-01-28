@@ -11,6 +11,7 @@ import com.payaut.onlinegrocerystore.entity.ItemType;
 import com.payaut.onlinegrocerystore.repository.ItemRepository;
 import com.payaut.onlinegrocerystore.service.GroceryStoreService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,11 +22,13 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class GroceryStoreServiceImpl implements GroceryStoreService {
     private final ItemRepository itemRepository;
 
     @Override
     public ReceiptDTO calculateOrder(List<ItemDTO> items) {
+        log.info("Received order with {} items", items.size());
         double total = 0;
         List<String> breakdown = new ArrayList<>();
 
@@ -36,9 +39,9 @@ public class GroceryStoreServiceImpl implements GroceryStoreService {
             DiscountStrategy strategy = pickStrategy(dto.getItemType());
             double cost = strategy.calculateCost(dto);
             breakdown.add(buildLabel(dto) + ": €" + String.format("%.2f", cost));
-            total += cost;
+            total = total+cost;
         }
-
+        log.info("Order processed successfully. Total: €{}", total);
         return ReceiptDTO.builder()
                 .withTotal(Double.parseDouble(String.format("%.2f", total)))
                 .withBreakdown(breakdown)
@@ -47,7 +50,7 @@ public class GroceryStoreServiceImpl implements GroceryStoreService {
 
     @Override
     public List<String> getDiscountRules() {
-        // Hard-coded
+        log.info("Fetching discount rules");
         List<String> rules = new ArrayList<>();
         rules.add("BREAD: 0–2 days old => no discount, 3–5 days old => Buy 1 Take 2, 6 days old=> Pay 1 Take 3, more than 6 days old => not allowed.");
         rules.add("VEGETABLE: weight ≤100 grams => 5% off, 101 grams ≤ 500 grams => 7%, >500 grams => 10% off.");
@@ -57,13 +60,17 @@ public class GroceryStoreServiceImpl implements GroceryStoreService {
 
     @Override
     public List<ItemDTO> getPrices() {
-        return itemRepository.findAll()
+        log.info("Fetching item prices from the database");
+        List<ItemDTO> prices = itemRepository.findAll()
                 .stream()
                 .map(this::toDTO)
                 .toList();
+        log.info("Prices fetched successfully. Items: {}", prices);
+        return prices;
     }
 
     private DiscountStrategy pickStrategy(ItemType type) {
+        log.debug("Determining discount strategy for item type: {}", type);
         return switch (type) {
             case BREAD -> new BreadDiscountStrategy();
             case VEGETABLE -> new VegetableDiscountStrategy();
@@ -73,6 +80,7 @@ public class GroceryStoreServiceImpl implements GroceryStoreService {
     }
 
     private String buildLabel(ItemDTO dto) {
+        log.debug("Building label for item: {}", dto);
         return switch (dto.getItemType()) {
             case BREAD -> dto.getQuantity() + " x Bread (" + dto.getDetails() + ")";
             case VEGETABLE -> dto.getQuantity() + "g Vegetables";
@@ -81,6 +89,7 @@ public class GroceryStoreServiceImpl implements GroceryStoreService {
     }
 
     private ItemDTO toDTO(Item entity) {
+        log.debug("Mapping Item entity to DTO: {}", entity);
         return ItemDTO.builder()
                 .withItemType(entity.getItemType())
                 .withName(entity.getName())
