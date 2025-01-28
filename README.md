@@ -53,7 +53,7 @@ Here are some considerations and assumptions made during the development process
 
 - The development process strictly followed the documentation and the detailed API specifications provided.
 - The discount rules are currently hardcoded, but they could be improved by creating APIs that allow you to add or modify discounts easily.
-- During development and testing, we used [``DataLoader``](https://github.com/NeeleshJaiswal/online-grocery-store/blob/main/src/main/java/com/payaut/onlinegrocerystore/config/DataLoader.java#L16) to set up product prices and quantities. This could be made better by creating APIs that let you dynamically add new products, update prices, or adjust quantities.
+- During development and testing, I used [``DataLoader``](https://github.com/NeeleshJaiswal/online-grocery-store/blob/main/src/main/java/com/payaut/onlinegrocerystore/config/DataLoader.java#L16) to set up product prices and quantities. This could be made better by creating APIs that let you dynamically add new products, update prices, or adjust quantities.
 
 ````
 itemRepository.save(Item.builder()
